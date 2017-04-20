@@ -1,0 +1,13 @@
+
+Start-Service W32Time
+Set-Service W32Time -StartupType Automatic
+Set-ItemProperty -path HKLM:\system\currentcontrolset\services\W32Time\parameters -PSProperty NtpServer -value %NTPServerIP%
+Restart-Service W32Time
+$verifyraw = w32tm /query /peers | Select-Object -First 3
+$verify2 = $verifyraw -match '%NTPServerIP%'
+$verifyfin = $verify2 -replace "Peer: "
+if ($verifyfin -eq "%NTPServerIP%") {Write-Output "update complete" | Out-GridView} else {Write-Output "update failed" | Out-GridView}
+sleep 10
+$event = Get-EventLog system -Newest 1 -InstanceId 37 | select -Unique -Property message -ExpandProperty message
+if ($event = "The time provider NtpClient is currently receiving valid time data from %NTPServerIP% (ntp.m|0x0|0.0.0.0:123->%NTPServerIP%:123).") {Write-Output "link successful" |Out-GridView} else {Write-Output "link down!" | Out-GridView}
+sleep 10
