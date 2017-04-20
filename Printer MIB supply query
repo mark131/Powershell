@@ -1,0 +1,17 @@
+# Powershell
+Random PS scripts
+
+$HPtoner = .\snmpwalk -os:1.3.6.1.2.1.43.11.1.1.7.1.4 -op:1.3.6.1.2.1.43.12.1.1.2.1.1 -r:%PrinterIPAddress%
+
+$tontotline = $HPtoner -match '1.3.6.1.2.1.43.11.1.1.8.1.1'
+
+[int]$tontotval = ($tontotline -replace "OID=.1.3.6.1.2.1.43.11.1.1.8.1.1, Type=Integer, Value=").Trim()
+
+$tonlevline = $HPtoner -match 'OID=.1.3.6.1.2.1.43.11.1.1.9.1.1'
+
+[int]$tonlevval = ($tonlevline -replace "OID=.1.3.6.1.2.1.43.11.1.1.9.1.1, Type=Integer, Value=").Trim()
+
+$tonper = $tonlevval / $tontotval * 100 -as [int]
+
+Write-host "HP Printer"
+write-host "the toner level is at" $tonper "percent"
