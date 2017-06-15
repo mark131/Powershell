@@ -1,0 +1,8 @@
+$date = get-date
+cd C:\Users\%user%
+$alltemp = .\SnmpWalk.exe -r:%RouterIP% -os:1.3.6.1.4.1.9.9.13.1.3.1.3 -op:1.3.6.1.4.1.9.9.13.1.3.1.4
+
+$intake = $alltemp -match '.1.3.6.1.4.1.9.9.13.1.3.1.3.3'
+
+[int]$intakeval = ($intake -replace "OID=.1.3.6.1.4.1.9.9.13.1.3.1.3.3, Type=Gauge32, Value=").Trim()
+if ($intakeval -gt %yourtemphere%) {Send-MailMessage -To name@domain.com -Cc name@domain.com -subject "DATA Center Temp warning $date" -body "The current router intake Temperature is $intakeval degrees Celsius." -SmtpServer %smtpaddress% -From name@domain.com} else {Write-Output "Intake Temp =" $intakeval | Out-File C:\temperature.html}
