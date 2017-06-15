@@ -1,0 +1,8 @@
+Write-Output "%computername%" | Out-File c:\storage.txt
+$var1 = gwmi -Class Win32_logicaldisk -ComputerName %computername% | select-Object DeviceID, @{label='Freespace';e={$_.FreeSpace / 1000MB -as [int]}}, @{label='Capacity';e={$_.Size / 1000MB -as [int]}}
+
+$var2 = $var1 | Select-Object 'Freespace', 'Capacity', 'DeviceID' | Where-Object 'Freespace' -GT 0 
+   
+$var3 = $var2 | Select-Object 'Freespace', 'Capacity' | foreach {$_.Freespace / $_.capacity * 100 -as [INT]} 
+write-output $var2 | out-file c:\storage.txt -append
+Write-Output $var3 | out-file c:\storage.txt -append
