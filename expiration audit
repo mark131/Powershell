@@ -1,0 +1,4 @@
+Write-Output 'header' | out-File c:\temp.csv
+Import-Csv c:\user.csv | foreach {net user $_.name /domain} | Out-File c:\temp.csv -Append
+Import-Csv c:\temp.csv | Where {($_.header -match 'User name') -or ($_.header -match 'Password expires')} | export-csv c:\expiring.csv
+Remove-Item C:\temp.csv
