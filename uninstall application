@@ -1,0 +1,1 @@
+gwmi win32_product -Filter "name LIKE '%crappyapplication%'" | foreach {if ($_.uninstall().returnvalue -eq 0) { write-host "Successfully uninstalled garbage" } else { write-warning "Failed to uninstall garbage." }}
