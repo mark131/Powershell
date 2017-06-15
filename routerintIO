@@ -1,0 +1,18 @@
+cd C:\Users\%user%
+$var1 = .\SnmpWalk.exe -r:%IP Address% -os:.1.3.6.1.4.1.9.2.2.1.1.5.88 -op:.1.3.6.1.4.1.9.2.2.1.1.6.2
+$var2 = .\SnmpWalk.exe -r:%IP Address% -os:.1.3.6.1.4.1.9.2.2.1.1.7.88 -op:.1.3.6.1.4.1.9.2.2.1.1.8.2
+$var3 = $var1 -match '.1.3.6.1.4.1.9.2.2.1.1.6.1'
+$var4 = $var2 -match '.1.3.6.1.4.1.9.2.2.1.1.8.1'
+
+[int]$fin5mininput = ($var3 -replace "OID=.1.3.6.1.4.1.9.2.2.1.1.6.1, Type=Integer, Value=").Trim()
+[int]$fin5minoutput = ($var4 -replace "OID=.1.3.6.1.4.1.9.2.2.1.1.8.1, Type=Integer, Value=").Trim()
+
+$time = (Get-Date -UFormat "%H:%M %d/%m/%y")
+
+$data = @()
+$row = New-Object PSObject
+$row | Add-Member -MemberType NoteProperty -Name "5 minute input" -Value $fin5mininput
+$row | Add-Member -MemberType NoteProperty -Name "5 minute output" -Value $fin5minoutput
+$row | Add-Member -MemberType NoteProperty -Name "time" -Value $time
+$data += $row
+$data | export-csv C:\routerint5minio.csv -NoTypeInformation -Append
