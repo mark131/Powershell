@@ -1,0 +1,28 @@
+$URI = 'http://forecast.weather.gov/MapClick.php?CityName=Lake+Villa&state=IL&site=LOT&lat=42.4175&lon=-88.0823#.WSbr_ty1uUk'
+Invoke-WebRequest -uri $URI -OutFile C:\temporaryfile.xml
+$full = Get-Content C:\temporaryfile.xml
+$trim1 = $full -match 'myforecast-current-lrg'
+$trim2 = $trim1 -replace '<p class="myforecast-current-lrg">'
+[int]$Temp = ($trim2 -replace '&deg;F</p>').Trim()
+
+$trim1 = $full -match '"myforecast-current">'
+$trim2 = $trim1 -replace '<p class="myforecast-current">'
+[string]$conditions = ($trim2 -replace '</p>').Trim()
+
+$trim1 = $full -match '%<'
+$trim2 = $trim1 -replace '<td>'
+[int]$humidity = ($trim2 -replace '%</td>').Trim()
+
+$trim1 = $full -match 'mph<'
+$trim2 = $trim1 -replace '<td>'
+[string]$wind = ($trim2 -replace '</td>').Trim()
+
+if ($temp -gt 62) {$tempwarn = "It's nice out"} else {$tempwarn = 'Bring a coat'}
+
+Write-Host 'Temperature (F) = '$Temp
+Write-Host 'Conditions right now are' $conditions
+Write-Host 'Current humidity is (%)' $humidity
+Write-Host 'The current wind conditions are' $wind
+Write-Host $tempwarn
+
+Remove-Item C:\temporaryfile.xml
