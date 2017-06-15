@@ -1,0 +1,12 @@
+$var1 = gwmi -ComputerName %ServerName% -class Win32_PerfRawData_tcpip_networkinterface | where name -Like *intel* | select packetspersec -ExpandProperty packetspersec 
+sleep 600
+$var2 = gwmi -ComputerName %ServerName% -class Win32_PerfRawData_tcpip_networkinterface | where name -Like *intel* | select packetspersec -ExpandProperty packetspersec
+[int]$ppm = ($var2 - $var1)/10
+$time = (Get-Date -UFormat "%H:%M %d/%m/%y")
+
+$data = @()
+$row = New-Object PSObject
+$row | Add-Member -MemberType NoteProperty -Name "ppm" -Value $ppm
+$row | Add-Member -MemberType NoteProperty -Name "time" -Value $time
+$data += $row
+$data | export-csv C:\serverpackspermin.csv -NoTypeInformation -Append
