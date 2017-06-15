@@ -1,0 +1,1 @@
+Get-EventLog system -After (Get-Date).AddDays(-3) -computername %IPAddress% -Source IAS | Select-Object TimeGenerated, entrytype, Message | ConvertTo-Html -CssUri "C:\Users\css.css" -Title "folks who remoted" -Head "These are the folks who remoted" > "C:\remotes.html"
